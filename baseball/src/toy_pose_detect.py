@@ -20,7 +20,7 @@ def main():
     with mp_pose.Pose(
             static_image_mode=True,
             model_complexity=2,
-            enable_segmentation=False,  # True
+            enable_segmentation=True,  # True
             min_detection_confidence=0.5) as pose:
         for idx, file in enumerate(IMAGE_FILES):
             image = cv2.imread(file)
@@ -43,7 +43,8 @@ def main():
             condition = np.stack((results.segmentation_mask,) * 3, axis=-1) > 0.1
             bg_image = np.zeros(image.shape, dtype=np.uint8)
             bg_image[:] = BG_COLOR
-            annotated_image = np.where(condition, annotated_image, bg_image)
+            # comment out(純粋にキーポイントのみを付けたければコメントアウト。)
+            # annotated_image = np.where(condition, annotated_image, bg_image)
             # Draw pose landmarks on the image.
             mp_drawing.draw_landmarks(
                 annotated_image,
@@ -52,8 +53,8 @@ def main():
                 landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
             cv2.imwrite(os.path.join(output_dir, f'annotated_image_{str(idx)}.png'), annotated_image)
             # Plot pose world landmarks.
-            mp_drawing.plot_landmarks(
-                results.pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
+            # mp_drawing.plot_landmarks(
+            #     results.pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
 
 
 if __name__ == '__main__':
